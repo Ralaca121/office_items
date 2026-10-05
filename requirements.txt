@@ -1,0 +1,27 @@
+# DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+
+# ML trained Models
+models/*.pt
+models/*.pth
+models/*.onnx
+*.weights
+
+# Image datasets
+*.jpg
+*.jpeg
+*.png
+*.zip
+
