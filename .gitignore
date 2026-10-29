@@ -1,0 +1,42 @@
+# DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+
+# ML trained Models
+models/*.pt
+models/*.pth
+models/*.onnx
+*.weights
+yolo*.pt
+runs/
+
+# Image datasets
+*.jpg
+*.jpeg
+*.png
+*.zip
+
+!src/assets/*.png
+!models/best_cls.pt
+!models/best_det.pt
+
+.DS_Store
+
+# Local datasets (keep only the detector config)
+data/*
+!data/detect_v1/
+data/detect_v1/*
+!data/detect_v1/data.yaml
+Dataset/
+*.cache
