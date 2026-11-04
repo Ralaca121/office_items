@@ -29,7 +29,8 @@ runs/
 
 !src/assets/*.png
 !models/best_cls.pt
-!models/best_det.pt
+!models/best_det1.pt
+!models/best_det2.pt
 
 .DS_Store
 
