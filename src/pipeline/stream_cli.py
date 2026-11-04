@@ -12,7 +12,6 @@ IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ]
 VIDEO_EXTENSIONS = [".mp4", ".avi", ".mov", ".mkv"]
 WINDOW_NAME = "Office Items Classification"
 DEFAULT_MODELS = {
-    "classify": "models/best_cls.pt",
     "detect": "models/best_det2.pt"
 }
 CLS_IMGSZ = 224
@@ -50,9 +49,9 @@ def parse_args(argv=None):
     )
     parser.add_argument(
         "--task",
-        choices=["classify", "detect"],
-        default="classify",
-        help="Mode of operation: classify or detect ",
+        choices=["detect"],
+        default="detect",
+        help="Mode of operation: detect ",
     )
     parser.add_argument(
         "--model",

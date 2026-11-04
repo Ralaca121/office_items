@@ -81,7 +81,7 @@ def top_bar(show_cancel=False):
 def settings():
     with st.sidebar:
         st.markdown('<h2><span class="ion ion-settings"></span>Settings</h2>', unsafe_allow_html=True)
-        task = st.selectbox("Mode", ["detect", "classify"])
+        task = st.selectbox("Mode", ["detect"])
         conf = st.slider("Confidence threshold", 0.05, 0.95, 0.50, 0.05)
         st.caption(f"Model: `{DEFAULT_MODELS[task]}`")
     return task, conf
