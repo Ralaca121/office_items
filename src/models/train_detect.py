@@ -9,11 +9,14 @@ BASE_WEIGHTS = "yolo11n.pt"
 
 def parse_args(argv=None):
     parser = argparse.ArgumentParser("Train YOLO11n detector")
-    parser.add_argument("--data", required=True, default="data/detect_v1/data.yaml", help="Path to the data.yaml")
-    parser.add_argument("--epochs", type=int, default=50)
+    parser.add_argument("--data", required=True, default="data/detect_v2/data.yaml", help="Path to the data.yaml")
+    parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--img_size", type=int, default=640)
     parser.add_argument("--batch", type=int, default=16)
-    parser.add_argument("--name", default="detect")
+    # Added patience arg for early stopping (default 15 epochs)
+    parser.add_argument("--patience", type=int, default=15, help="Epochs to wait for improvement before early stopping")
+    parser.add_argument("--device", default=None, help="e.g. mps, cpu, or 0")
+    parser.add_argument("--name", default="detect_v2")
     return parser.parse_args(argv)
 
 
@@ -56,9 +59,9 @@ def main(argv=None):
         imgsz=args.img_size,
         batch=args.batch,
         project="runs",
-        name="detect_v1",
+        name=args.name,
         exist_ok=True,
-        patience=15,
+        patience=args.patience,
         # data augmentation
         degrees=15.0,
         scale=0.5,
@@ -74,7 +77,7 @@ def main(argv=None):
     )
 
 
-    best = Path("runs") / "detect_v1" / "detect_v1" / "weights" / "best.pt"
+    best = Path("runs") / "detect_v2" /"weights" / "best.pt"
     print(f"\nBest weights: {best}")
 
 if __name__ == "__main__":

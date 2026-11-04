@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from src.pipeline.stream_cli import load_model, infer, draw_output, DEFAULT_MODELS
+from src.pipeline.stream_cli import load_model, infer, draw_output, DEFAULT_MODELS, DetectionSmoother
 
 st.set_page_config(page_title="Office Items Detector", page_icon="🔍", layout="wide", initial_sidebar_state="expanded")
 
@@ -151,6 +151,7 @@ def stream():
             return
         holder = st.empty()
         n, last = 0, ([] if task == "detect" else ("...", 0.0))
+        smoother = DetectionSmoother(min_hits=3) if task == "detect" else None
         try:
             while ss.streaming:
                 ok, frame = cap.read()
@@ -159,6 +160,8 @@ def stream():
                 n += 1
                 if n % 2 == 0:
                     last = infer(model, frame, task, conf)
+                    if smoother:
+                        last = smoother.update(last)
                 out = draw_output(frame, last, task, conf)
                 holder.image(cv2.cvtColor(out, cv2.COLOR_BGR2RGB), channels="RGB", use_container_width=True)
         finally:
