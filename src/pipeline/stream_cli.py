@@ -11,17 +11,16 @@ from ultralytics import YOLO
 IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ]
 VIDEO_EXTENSIONS = [".mp4", ".avi", ".mov", ".mkv"]
 WINDOW_NAME = "Office Items Classification"
+# Default detector and inference image sizes.
 DEFAULT_MODELS = {
     "detect": "models/best_det2.pt"
 }
 CLS_IMGSZ = 224
 DET_IMGSZ = 640
-# Classes that over-trigger get a higher floor than the global --conf
+# These classes must meet their class-specific minimum as well as the global --conf.
 CLASS_MIN_CONF = {"Chair": 0.60, "Book": 0.50}
 
-# COCO-pretrained "gate" model: our box is dropped when it matches (IoU >= COCO_IOU)
-# a COCO object that is NOT one of our classes. Key = COCO class name,
-# value = our classes it may veto (None = veto every class).
+# Each key is a COCO class; its value lists our classes it can veto (None means all).
 COCO_WEIGHTS = "yolo11n.pt"
 COCO_CONF = 0.40
 COCO_IOU = 0.50
@@ -42,6 +41,7 @@ def parse_args(argv=None):
     parser = argparse.ArgumentParser(
         description="OpenCV stream runner (camera / image / video)"
     )
+    # A numeric source selects a camera; otherwise source must be a supported image or video file.
     parser.add_argument(
         "--source",
         required=True,
@@ -85,11 +85,11 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 def resolve_source(source: str):
-    # camera source
+    # Numeric input is interpreted as an OpenCV camera index.
     if source.isdigit():
         return "camera", int(source)
 
-    # file source
+    # Non-numeric input must point to a supported image or video file.
     path = Path(source)
     if not path.exists() or not path.is_file():
         raise FileNotFoundError(f"File not found: {source}")
@@ -135,6 +135,7 @@ def class_threshold(label, conf_thresh):
 def coco_veto_boxes(frame):
     """Run the COCO model and return [(coco_label, box)] for classes in COCO_VETO."""
     global _coco_model
+    # Load the auxiliary model only once; reuse it for subsequent frames.
     if _coco_model is None:
         _coco_model = YOLO(COCO_WEIGHTS)
     result = _coco_model.predict(frame, imgsz=DET_IMGSZ, conf=COCO_CONF, verbose=False)[0]
@@ -153,6 +154,7 @@ def filter_distractors(frame, detections):
     vetoes = coco_veto_boxes(frame)
     kept = []
     for label, conf, box in detections:
+        # A matching COCO box suppresses only the configured office-item classes.
         vetoed = any(
             (COCO_VETO[name] is None or label in COCO_VETO[name]) and iou(box, vbox) >= COCO_IOU
             for name, vbox in vetoes
@@ -164,7 +166,7 @@ def filter_distractors(frame, detections):
 
 def detect_objects(model, frame, conf_thresh=0.25, coco_filter=True):
     """Detection: return list of label, confidence, and bounding box coordinates"""
-    # agnostic NMS stops the same region being reported as two different classes
+    # Class-agnostic NMS prevents the same region being returned under multiple labels.
     result = model.predict(
         frame, imgsz=DET_IMGSZ, conf=conf_thresh, agnostic_nms=True, verbose=False
     )[0]
@@ -178,6 +180,7 @@ def detect_objects(model, frame, conf_thresh=0.25, coco_filter=True):
         cls_id = int(box.cls[0].item())
         confidence = float(box.conf[0].item())
         label = names[cls_id]
+        # Apply the stricter class threshold before converting the box to pixel coordinates.
         if confidence < class_threshold(label, conf_thresh):
             continue
         x1, y1, x2, y2 = map(int, box.xyxy[0].tolist())
@@ -188,6 +191,7 @@ def detect_objects(model, frame, conf_thresh=0.25, coco_filter=True):
 
 
 def iou(a, b):
+    """Return intersection-over-union for two xyxy bounding boxes."""
     ix1, iy1 = max(a[0], b[0]), max(a[1], b[1])
     ix2, iy2 = min(a[2], b[2]), min(a[3], b[3])
     inter = max(0, ix2 - ix1) * max(0, iy2 - iy1)
@@ -207,6 +211,7 @@ class DetectionSmoother:
         self.tracks = []
 
     def update(self, detections):
+        # Match each detection to one same-class track with sufficient box overlap.
         for t in self.tracks:
             t["matched"] = False
         for label, conf, box in sorted(detections, key=lambda d: -d[1]):
@@ -227,6 +232,7 @@ class DetectionSmoother:
             best["hits"] += 1
             best["misses"] = 0
             best["matched"] = True
+        # Reduce confidence in tracks not seen this step, then discard stale tracks.
         for t in self.tracks:
             if not t["matched"]:
                 t["misses"] += 1
@@ -278,6 +284,7 @@ def run_stream(source_value, model, task, conf, infer_every=2, min_hits=3, coco_
 
     frame_count = 0
     last_output = [] if task == "detect" else ("Detecting...", 0.0)
+    # Smoothing is optional: min_hits=1 displays detections immediately.
     smoother = DetectionSmoother(min_hits=min_hits) if task == "detect" and min_hits > 1 else None
     prev_t = time.time()
 
@@ -290,16 +297,16 @@ def run_stream(source_value, model, task, conf, infer_every=2, min_hits=3, coco_
 
             frame_count += 1
 
-            # Inference every n frames for better performance
+            # Reuse the last result between inference steps to reduce model workload.
             if frame_count % infer_every == 0:
                 last_output = infer(model, frame, task, conf, coco_filter)
                 if smoother:
                     last_output = smoother.update(last_output)
 
-            # Drawing classification overlay
+            # Draw the latest detection result on the current frame.
             out = draw_output(frame, last_output, task, conf)
 
-            # FPS overlay
+            # Display the stream's processing rate.
             now = time.time()
             fps = 1.0 / max((now - prev_t), 1e-6)
             prev_t = now
@@ -325,11 +332,12 @@ def main(argv=None):
     try:
         source_type, source_value = resolve_source(args.source)
         model_path = args.model or DEFAULT_MODELS[args.task]
-        model = load_model(model_path) # loads once
+        model = load_model(model_path)  # Load weights once and reuse for every frame.
 
         if source_type == "image":
             run_image(source_value, model, args.task, args.conf, not args.no_coco_filter)
         else:
+            # Pass stream-specific controls only to the video/camera loop.
             run_stream(source_value, model, args.task, args.conf,
                        infer_every=args.infer_every, min_hits=args.min_hits, coco_filter=not args.no_coco_filter)
 
