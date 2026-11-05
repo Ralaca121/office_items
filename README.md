@@ -1,7 +1,7 @@
 # Office Items Object Detection
 The following will be steps on how to train the model, obtain the perfomance metrices of the model and how to run the app.
 
-## 1. Set up the Pyhton environment
+## 1. Set up the Python environment
 
 Run these commands from the repository root having python and pip already installed:
 
