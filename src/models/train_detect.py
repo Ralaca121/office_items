@@ -64,16 +64,7 @@ def main(argv=None):
         patience=args.patience,
         # data augmentation
         degrees=15.0,
-        scale=0.5,
-        translate=0.1,
-        shear=2.0,
-        perspective=0.0,
-        flipud=0.0,
-        fliplr=0.5,
-        hsv_h=0.015,
-        hsv_s=0.4,
-        hsv_v=0.2,
-        
+        shear=2.0, 
     )
 
 
