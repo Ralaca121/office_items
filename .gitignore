@@ -32,6 +32,10 @@ runs/
 !models/best_det1.pt
 !models/best_det2.pt
 
+# Val images
+!/runs/detect/val/*.png
+!/runs/detect/val/*.jpg
+
 .DS_Store
 
 # Local datasets (keep only the detector config)
