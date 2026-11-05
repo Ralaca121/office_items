@@ -33,6 +33,9 @@ runs/
 !models/best_det2.pt
 
 # Val images
+!runs/
+!runs/detect/
+!runs/detect/val/
 !runs/detect/val/*.png
 !runs/detect/val/*.jpg
 
