@@ -1,16 +1,32 @@
+* Dataset Name: Office Items Object Detection Dataset 
+* Task Type: Single & Multi-Object Detection (Bounding Box)
+* Image Resolution: 640 x 640 pixels
+* Negative Background Samples: 90 empty office/desk scenes (0 bounding boxes)
 
-| Feature Name | DataType           |Status         | Total |
-| :---         | :---               | :---          | :---  |
-| Bin          | .jpg / .jpeg/ .png | Fully Labeled |100    |
-| Book         | .jpg / .jpeg/ .png | Fully Labeled | 100   |
-| Chair        | .jpg / .jpeg/ .png | Fully Labeled | 100   |
-| Computer     | .jpg / .jpeg/ .png | Fully Labeled | 100   |
-| Pens         | .jpg / .jpeg/ .png | Fully Labeled | 100   |
-| Stapler      | .jpg / .jpeg/ .png | Fully Labeled | 100   |
-| Table        | .jpg / .jpeg/ .png | Fully Labeled | 100   |
-| Telephone    | .jpg / .jpeg/ .png | Fully Labeled | 100   |
-| None         | .jpg / .jpeg/ .png | Unlabeled     | 90    |
-| Total | 890 | 800 Labeled | 
+| Feature Name | DataType           |Status         | 
+| :---         | :---               | :---          |
+| Bin          | .jpg / .jpeg/ .png | Fully Labeled | 
+| Book         | .jpg / .jpeg/ .png | Fully Labeled | 
+| Chair        | .jpg / .jpeg/ .png | Fully Labeled | 
+| Computer     | .jpg / .jpeg/ .png | Fully Labeled | 
+| Pen          | .jpg / .jpeg/ .png | Fully Labeled | 
+| Stapler      | .jpg / .jpeg/ .png | Fully Labeled |
+| Table        | .jpg / .jpeg/ .png | Fully Labeled | 
+| Telephone    | .jpg / .jpeg/ .png | Fully Labeled | 
+| None         | .jpg / .jpeg/ .png | Unlabeled     | 
+
+| Feature Name | Train   |Test  | Val | Total |
+| :---         | :---    | :--- | :---|       |
+| Bin          | 70      | 15   | 10  |  95   |
+| Book         | 66      | 11   | 13  |  90   |
+| Chair        | 67      | 12   | 13  |  92   |
+| Computer     | 70      | 12   | 11  |  93   |
+| Pen          | 67      | 14   | 15  |  96   |
+| Stapler      | 70      | 13   | 14  |  97   |
+| Table        | 67      | 15   | 14  |  96   |
+| Telephone    | 70      | 15   | 15  |  100  |
+| None         | 66      | 12   | 12  |  90   |
+| Total | 851  | 761 Labeled | 
 
 Intended Task : Object detection to sort office items
 
