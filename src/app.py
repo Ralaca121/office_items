@@ -151,7 +151,7 @@ def stream():
             return
         holder = st.empty()
         n, last = 0, ([] if task == "detect" else ("...", 0.0))
-        smoother = DetectionSmoother(min_hits=3) if task == "detect" else None
+        smoother = DetectionSmoother(min_hits=2) if task == "detect" else None
         try:
             while ss.streaming:
                 ok, frame = cap.read()
