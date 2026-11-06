@@ -87,10 +87,14 @@ If it does not open automatically open the local URL printed by Streamlit in you
 
 ## Troubleshooting
 a) `FileNotFoundError: data/detect_v2/data.yaml not found`
+
     Fix: Ensure you are executing commands from the root directory
+    
 b) `Mode file not found: models/best_det2.pt`
-    Fix: Run Step 4
-     (`cp runs/detect_v2/weights/best.pt models/best_det2.pt`) before launching `test_detect` or `app.py`
+
+Fix: Run Step 4 (`cp runs/detect_v2/weights/best.pt models/best_det2.pt`) before launching `test_detect` or `app.py`
+     
 c) Webcam fails to open in Live Stream
-    Fix: Verify terminal/browser camera permissions in system settings, or adjust camera index in settings from 0 to 1
+
+Fix: Verify terminal/browser camera permissions in system settings, or adjust camera index in settings from 0 to 1
     
