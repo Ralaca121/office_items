@@ -28,7 +28,7 @@ data/detect_v2/
     ├── images/
     └── labels/
 ```
-Move the dataset into the directory with the rest of the code.
+Move or extract the dataset directory into the root folder with the rest of the code.
 
 ## 3. Train the detector
 
@@ -42,12 +42,11 @@ python -m src.models.train_detect \
   --batch 16 \
   --patience 15
 ```
-
-The script uses pretrained YOLO11n weights and save the best checkpoint to:
-
-```text
-runs/detect_v2/weights/best.pt
-```
+### Expected Output during Training
+i. Pretrained weights (`yolo11n.pt`) download automatically on the first run
+ii. Console prints dataset validation checks and live epochs progress
+iii. If validation metrics plateau for 15 consecutive epochs, Early Stopping triggers.
+iv. Saved weights output path: `runs/detect_v2/weights/best.pt`.
 
 The first training run may need an internet connection to download the pretrained weights.
 
@@ -69,6 +68,10 @@ Run this after copying the new weights:
 python -m src.models.test_detect
 ```
 
+### Expected Output:
+i. Prints overall metrics to terminal:mAP50, Precision, Recall and Inference Frames per Second
+ii. Saves annotated test frames and confusion matrix plots to `runs/detect/predict/`.
+
 ## 6. Run the Streamlit app
 
 With the virtual environment active and `models/best_det2.pt` available, start the app from the repository root:
@@ -76,5 +79,13 @@ With the virtual environment active and `models/best_det2.pt` available, start t
 ```bash
 streamlit run src/app.py
 ```
+Expected Output:
+i. Launches a web server and opens your default browser at `http://localhost:8501`.
+ii. Interactive canvas featuring Upload Image and Live Stream
 
 If it does not open automatically open the local URL printed by Streamlit in you browser.
+
+## Troubleshooting
+a) ```text
+FileNotFoundError: data/detect_v2/data.yaml not 
+```
