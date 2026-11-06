@@ -8,7 +8,7 @@ Run these commands from the repository root having python and pip already instal
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pyhton -m pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 ## 2. Prepare the dataset
